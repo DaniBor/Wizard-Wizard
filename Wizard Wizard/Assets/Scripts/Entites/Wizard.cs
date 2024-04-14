@@ -14,7 +14,8 @@ public class Wizard : Entity
 
     protected bool stunned;
 
-    [SerializeField] public List<StatusEffect> effects;
+    public List<StatusEffect> effects;
+    protected Rigidbody2D rb;
 
 
     protected enum WizardState
@@ -30,7 +31,6 @@ public class Wizard : Entity
     private void Awake()
     {
         speed = 1.5f;
-        health = 0;
 
         effects = new List<StatusEffect>();
     }
@@ -46,7 +46,28 @@ public class Wizard : Entity
         if (health < 0)
         {
             DeleteWizard();
+            return;
         }
+
+        if (dmg.type == Damage.DamageType.LIGHTNING)
+        {
+            Debug.Log("Checking for stun...");
+            if (effects.Count > 0)
+            {
+                foreach(var effect in effects)
+                {
+                    if (effect.type == StatusEffect.EffectType.STUN){
+                        Debug.Log("Stun detected...");
+                        return;
+                    }
+                }
+            }
+            Debug.Log("Applying Status effect...");
+            ApplyStatusEffect(new StatusEffect(1, 1, this, new EffectLightning(), StatusEffect.EffectType.STUN));
+        }
+
+
+        
     }
 
     public bool checkAlly()

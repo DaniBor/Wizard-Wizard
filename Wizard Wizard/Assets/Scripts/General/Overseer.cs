@@ -41,13 +41,26 @@ public class Overseer : MonoBehaviour
 
     public void handleInput()
     {
-        if(input.text.ToLower() == "fire")
+        string str = input.text.ToLower();
+
+        switch (str)
         {
-            SpawnWizard(player.transform, wizardPrefabs[0], true);
-            input.text = string.Empty;
-            input.gameObject.SetActive(false);
-            forceDeselectButton.Select();
+            case "magic":
+                SpawnWizard(player.transform, wizardPrefabs[0], true);
+                break;
+            case "fire":
+                SpawnWizard(player.transform, wizardPrefabs[1], true);
+                break;
+            case "lightning":
+                SpawnWizard(player.transform, wizardPrefabs[2], true);
+                break;
+            default:
+                break;
         }
+
+        input.text = string.Empty;
+        input.gameObject.SetActive(false);
+        forceDeselectButton.Select();
     }
 
     private void SpawnWizard(Transform t, GameObject wizard, bool isAlly)
@@ -65,6 +78,40 @@ public class Overseer : MonoBehaviour
     {
         return enemyWizards;
     }
+
+    public Wizard getClosestEnemyWizard(Transform t)
+    {
+        Wizard result = null;
+        foreach(Wizard wiz in  enemyWizards)
+        {
+            if(result == null)
+                result = wiz;
+            if(Vector3.Distance(transform.position, result.transform.position) >
+                Vector3.Distance(transform.position, wiz.transform.position))
+            {
+                result = wiz;
+            }
+        }
+        return result;
+    }
+
+    public Wizard getClosestPlayerWizard(Transform t)
+    {
+        Wizard result = null;
+        foreach (Wizard wiz in playerWizards)
+        {
+            if (result == null)
+                result = wiz;
+            if (Vector3.Distance(transform.position, result.transform.position) >
+                Vector3.Distance(transform.position, wiz.transform.position))
+            {
+                result = wiz;
+            }
+        }
+        return result;
+    }
+
+
     #endregion
 
     public void OnAllyWizardKill(Wizard wiz)
@@ -90,4 +137,6 @@ public class Overseer : MonoBehaviour
         stairs.SetActive(false);
         SceneManager.LoadScene("End Screen");
     }
+
+    
 }

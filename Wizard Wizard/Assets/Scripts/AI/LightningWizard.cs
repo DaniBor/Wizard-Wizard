@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
 
-public class FireWizard : Wizard, IWizardAI
+public class LightningWizard : Wizard, IWizardAI
 {
-    [SerializeField] private GameObject fireProjectilePrefab;
-    
+    [SerializeField] private GameObject lightningProjectilePrefab;
+
+
 
     private void Awake()
     {
@@ -17,6 +17,7 @@ public class FireWizard : Wizard, IWizardAI
         curState = WizardState.RUNNING;
 
         rb = GetComponent<Rigidbody2D>();
+
     }
 
     private void Start()
@@ -25,17 +26,13 @@ public class FireWizard : Wizard, IWizardAI
         speed = 1.5f;
     }
 
-    private void Update()
-    {
-
-        UpdateEffects();
-        Behave();
-    }
 
     public void Behave()
     {
-        if(target == null)
+        if (target == null)
             getClosestWizard();
+
+        Debug.Log(target);
 
         switch (curState)
         {
@@ -45,6 +42,15 @@ public class FireWizard : Wizard, IWizardAI
                 UpdateAttack();
                 break;
         }
+    }
+
+
+    private void Update()
+    {
+        UpdateEffects();
+        Behave();
+
+        
 
         timeTilAttack -= attackRate * Time.deltaTime;
     }
@@ -54,13 +60,12 @@ public class FireWizard : Wizard, IWizardAI
         UpdateMovement();
     }
 
-    
 
     void UpdateMovement()
     {
         try
         {
-            if (Vector2.Distance(transform.position, target.transform.position) > 2.5f)
+            if (Vector2.Distance(transform.position, target.transform.position) > 2.0f)
             {
                 Vector3 delta = transform.position - target.transform.position;
                 delta.Normalize();
@@ -77,6 +82,7 @@ public class FireWizard : Wizard, IWizardAI
             return;
         }
     }
+
 
     void UpdateAttack()
     {
@@ -95,13 +101,11 @@ public class FireWizard : Wizard, IWizardAI
             }
 
             dir.Normalize();
-            FireballProjectile projectile =
-                Instantiate(fireProjectilePrefab, transform.position, Quaternion.identity)
-                .GetComponent<FireballProjectile>();
+            LightningProjectile projectile =
+                Instantiate(lightningProjectilePrefab, transform.position, Quaternion.identity)
+                .GetComponent<LightningProjectile>();
 
-            projectile.dir = dir;
             projectile.isAllyProjectile = isAlly;
-            projectile.speed = 5.0f;
 
             timeTilAttack = attackTimer;
         }

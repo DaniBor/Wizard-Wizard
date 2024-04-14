@@ -39,7 +39,7 @@ public class FireballProjectile : MonoBehaviour, IProjectile
             if (isAllyProjectile != wiz.checkAlly())
             {
                 EffectBurning ef = new EffectBurning();
-                StatusEffect burn = new StatusEffect(2, 1, wiz, ef);
+                StatusEffect burn = new StatusEffect(2, 1, wiz, ef, StatusEffect.EffectType.DEBUFF);
 
                 wiz.DamageMe(new Damage(1, Damage.DamageType.FIRE));
                 wiz.ApplyStatusEffect(burn);

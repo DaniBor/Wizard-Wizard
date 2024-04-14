@@ -14,14 +14,24 @@ public class StatusEffect
     public Wizard target;
 
     public IStatusEffect effect;
+    
 
+    public enum EffectType
+    {
+        BUFF,
+        DEBUFF,
+        STUN,
+        STUNIMMUNITY
+    }
+    public EffectType type;
 
-    public StatusEffect(float duration, float tickTime, Wizard target, IStatusEffect effect)
+    public StatusEffect(float duration, float tickTime, Wizard target, IStatusEffect effect, EffectType type)
     {
         this.duration = duration;
         this.tickTime = tickTime;;
         this.target = target;
         this.effect = effect;
+        this.type = type;
     }
 
     public void Update()
