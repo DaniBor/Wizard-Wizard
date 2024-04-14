@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Entity : MonoBehaviour
 {
     protected float maxHealth;
-    protected float health;
+    [SerializeField] protected float health;
 
     protected float maxMana;
     protected float mana;

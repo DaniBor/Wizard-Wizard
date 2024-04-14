@@ -4,5 +4,7 @@ using UnityEngine;
 
 public interface IWizardAI
 {
-    
+    void Behave();
+
+    void ApplyStatusEffect(StatusEffect effect);
 }

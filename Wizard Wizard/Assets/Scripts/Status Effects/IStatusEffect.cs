@@ -5,4 +5,8 @@ using UnityEngine;
 public interface IStatusEffect
 {
 
+    void OnStart();
+    void OnTick(Wizard wiz);
+    void OnRefresh();
+    void OnEnd();
 }
