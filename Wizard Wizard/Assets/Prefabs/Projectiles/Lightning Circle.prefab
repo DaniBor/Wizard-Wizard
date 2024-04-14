@@ -98,6 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2838aefd649d25846bf3a32aa13bc6bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isAllyProjectile: 0
+  lightingParticlePrefab: {fileID: 5325325954749762121, guid: 6d28e7d4a1f6118409cd28432b5a5263, type: 3}
 --- !u!120 &7725548174477858696
 LineRenderer:
   serializedVersion: 2

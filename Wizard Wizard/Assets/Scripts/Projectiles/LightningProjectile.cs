@@ -12,6 +12,10 @@ public class LightningProjectile : MonoBehaviour, IProjectile
 
     private LineRenderer lr;
 
+    [SerializeField] private GameObject lightingParticlePrefab;
+
+    private float timer = 0.2f;
+
     public void Behave()
     {
         throw new System.NotImplementedException();
@@ -26,13 +30,18 @@ public class LightningProjectile : MonoBehaviour, IProjectile
         lr = GetComponent<LineRenderer>();
         lightningChain = FindTargets();
         RenderLine();
+        ApplyLightning();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        timer -= Time.deltaTime;
+        if(timer <= 0.0f)
+        {
+            Destroy(gameObject);
+        }
     }
 
     List<Wizard> SortTargets(Transform t, List<Wizard> wizards)
@@ -81,7 +90,6 @@ public class LightningProjectile : MonoBehaviour, IProjectile
 
     private void RenderLine()
     {
-        
         if (lightningChain != null)
         {
             foreach (var target in lightningChain)
@@ -108,6 +116,7 @@ public class LightningProjectile : MonoBehaviour, IProjectile
             foreach(var wizard in lightningChain)
             {
                 wizard.DamageMe(new Damage(3, Damage.DamageType.LIGHTNING));
+                Instantiate(lightingParticlePrefab, wizard.transform.position, Quaternion.identity);
             }
         }
     }

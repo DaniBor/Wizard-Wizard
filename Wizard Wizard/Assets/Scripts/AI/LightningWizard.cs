@@ -11,57 +11,61 @@ public class LightningWizard : Wizard, IWizardAI
 
     private void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
+
         attackTimer = 2;
         timeTilAttack = attackTimer;
         attackRate = 1;
-        curState = WizardState.RUNNING;
-
-        rb = GetComponent<Rigidbody2D>();
-
-    }
-
-    private void Start()
-    {
-        getClosestWizard();
-        speed = 1.5f;
+        speed = 2.0f;
     }
 
 
     public void Behave()
     {
-        if (target == null)
-            getClosestWizard();
-
-        Debug.Log(target);
-
         switch (curState)
         {
-            case WizardState.RUNNING:
+            case WizardState.IDLE:
+                BehaveIdle();
                 break;
             case WizardState.ATTACKING:
-                UpdateAttack();
+                BehaveAttacking();
+                break;
+            case WizardState.FLEEING:
+                BehaveFleeing();
+                break;
+            case WizardState.RUNNING:
+                break;
+            default:
                 break;
         }
+        UpdateEffects();
+        timeTilAttack -= attackRate * Time.deltaTime;
     }
 
 
     private void Update()
     {
-        UpdateEffects();
         Behave();
-
-        
-
-        timeTilAttack -= attackRate * Time.deltaTime;
     }
 
     private void FixedUpdate()
     {
-        UpdateMovement();
+        if (curState == WizardState.RUNNING)
+        {
+            BehaveRunning();
+        }
     }
 
+    public void BehaveIdle()
+    {
+        if (target == null)
+        {
+            getClosestWizard();
+        }
+        else curState = WizardState.RUNNING;
+    }
 
-    void UpdateMovement()
+    public void BehaveRunning()
     {
         try
         {
@@ -83,8 +87,7 @@ public class LightningWizard : Wizard, IWizardAI
         }
     }
 
-
-    void UpdateAttack()
+    public void BehaveAttacking()
     {
         if (timeTilAttack <= 0)
         {
@@ -109,5 +112,10 @@ public class LightningWizard : Wizard, IWizardAI
 
             timeTilAttack = attackTimer;
         }
+    }
+
+    public void BehaveFleeing()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,12 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Wizard : Entity
 {
-    [SerializeField] protected bool isAlly;
+    public bool isAlly;
 
-    protected Wizard target;
+    [SerializeField] protected Wizard target;
 
     protected float attackTimer;
     protected float timeTilAttack;
@@ -42,10 +43,12 @@ public class Wizard : Entity
 
     public void DamageMe(Damage dmg)
     {
+        Debug.Log("Killed by lightning for some reason");
         health -= dmg.damageAmount - defense;
         if (health < 0)
         {
-            DeleteWizard();
+            effects.Clear();
+            Overseer.Instance.OnWizardKill(this);
             return;
         }
 
@@ -76,11 +79,7 @@ public class Wizard : Entity
     }
     protected void getClosestWizard()
     {
-        List<Wizard> enemies;
-        if (isAlly)
-            enemies = Overseer.Instance.getEnemyWizards();
-        else
-            enemies = Overseer.Instance.getPlayerWizards();
+        List<Wizard> enemies = Overseer.Instance.getWizards(isAlly);
 
         foreach (Wizard w in enemies)
         {
@@ -104,14 +103,7 @@ public class Wizard : Entity
             }
         }
     }
-    protected void DeleteWizard()
-    {
-        if (isAlly)
-            Overseer.Instance.OnAllyWizardKill(this);
-        else
-            Overseer.Instance.OnEnemyWizardKill(this);
-        Destroy(gameObject);
-    }
+    
 
     public void ApplyStatusEffect(StatusEffect effect)
     {
@@ -120,17 +112,34 @@ public class Wizard : Entity
 
     protected void UpdateEffects()
     {
-        foreach (var effect in effects)
+        if(effects.Count > 0)
         {
-            if (effect != null)
+            try
             {
-                Debug.Log("Updating Effcts...");
-                effect.Update();
-                if (effect.countDown()){
-                    effect.EndEffect();
-                    effects.Remove(effect);
+                foreach (var effect in effects)
+                {
+                    if (effect != null)
+                    {
+                        effect.Update();
+                        if (effect.countDown())
+                        {
+                            effect.EndEffect();
+                            effects.Remove(effect);
+                        }
+                    }
                 }
             }
+            catch (Exception)
+            {
+                return;
+            }
         }
+        
+    }
+
+    protected bool IsWizardCloser(Wizard a, Wizard b)
+    {
+        return Vector3.Distance(transform.position, a.transform.position) >
+            Vector3.Distance(transform.position, b.transform.position);
     }
 }

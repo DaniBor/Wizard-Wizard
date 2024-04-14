@@ -6,21 +6,21 @@ public class EffectLightning : IStatusEffect
 {
     public void OnEnd()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
     public void OnRefresh()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
     public void OnStart()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
     public void OnTick(Wizard wiz)
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 }

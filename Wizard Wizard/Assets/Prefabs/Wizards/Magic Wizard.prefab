@@ -184,6 +184,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3885a1192e8c3a64e99c2f3490fc4b1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 10
+  isAlly: 0
+  target: {fileID: 0}
+  effects: []
+  curState: 0
+  magicProjectilePrefab: {fileID: 8274541384762375054, guid: 4b8f7ff8a6f51e44896c5b1c66c40092, type: 3}
 --- !u!61 &2510204111921559140
 BoxCollider2D:
   m_ObjectHideFlags: 0

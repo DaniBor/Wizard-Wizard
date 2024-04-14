@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public class Overseer : MonoBehaviour
 {
@@ -15,11 +16,14 @@ public class Overseer : MonoBehaviour
     [SerializeField] private GameObject stairs;
 
     [SerializeField] private GameObject[] wizardPrefabs;
-
     [SerializeField] private List<Wizard> playerWizards;
     [SerializeField] private List<Wizard> enemyWizards;
+    [SerializeField] private Dictionary<string, int> enemyWizardSupply = new Dictionary<string, int>();
 
-    
+    private int floorCount;
+    private int spawnTimer;
+    private int timeTilSpawn;
+    private List<Wizard> deadWizards = new List<Wizard>();
 
     private void Awake()
     {
@@ -31,6 +35,27 @@ public class Overseer : MonoBehaviour
 
         Instance = this;
         input.gameObject.SetActive(false);
+
+
+        floorCount = 0;
+        //It is assumed that the game starts over on Awake
+        StartFloorOne();
+    }
+
+    private void LateUpdate()
+    {
+        if(deadWizards.Count > 0)
+        {
+            foreach(Wizard wiz in deadWizards)
+            {
+                playerWizards.Remove(wiz);
+                enemyWizards.Remove(wiz);
+                if(!wiz.IsDestroyed())
+                    Destroy(wiz.gameObject);
+            }
+            if(enemyWizards.Count == 0)
+                stairs.SetActive(true);
+        }
     }
 
     public void startInput()
@@ -65,10 +90,20 @@ public class Overseer : MonoBehaviour
 
     private void SpawnWizard(Transform t, GameObject wizard, bool isAlly)
     {
-        Instantiate(wizard, t.position, t.rotation);
+        Wizard wiz = Instantiate(wizard, t.position, t.rotation).GetComponent<Wizard>();
+        wiz.isAlly = isAlly;
+        if (isAlly)
+            playerWizards.Add(wiz);
+        else
+            enemyWizards.Add(wiz);
     }
 
     #region Getters
+    public List<Wizard> getWizards(bool isAlly)
+    {
+        return isAlly == true ? enemyWizards : playerWizards;
+    }
+
     public List<Wizard> getPlayerWizards()
     {
         return playerWizards;
@@ -114,29 +149,31 @@ public class Overseer : MonoBehaviour
 
     #endregion
 
-    public void OnAllyWizardKill(Wizard wiz)
+    public void OnWizardKill(Wizard wiz)
     {
-        playerWizards.Remove(wiz);
-    }
-
-    public void OnEnemyWizardKill(Wizard wiz)
-    {
-        enemyWizards.Remove(wiz);
-        if(enemyWizards.Count == 0)
-        {
-            foreach(Wizard w in playerWizards)
-            {
-                w.DamageMe(new Damage(99999, Damage.DamageType.MAGIC));
-            }
-        }
-        stairs.SetActive(true);
+        deadWizards.Add(wiz);
     }
 
     public void StartNextFloor()
     {
         stairs.SetActive(false);
+
+        if(floorCount == 10)
+        {
+
+        }
+        else
+        {
+
+        }
+
         SceneManager.LoadScene("End Screen");
     }
 
-    
+    private void StartFloorOne()
+    {
+        enemyWizardSupply.Add("fire", 5);
+        enemyWizardSupply.Add("magic", 5);
+    }
+
 }

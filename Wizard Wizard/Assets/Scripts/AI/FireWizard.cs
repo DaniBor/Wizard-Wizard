@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
 
 public class FireWizard : Wizard, IWizardAI
@@ -14,49 +13,56 @@ public class FireWizard : Wizard, IWizardAI
         attackTimer = 2;
         timeTilAttack = attackTimer;
         attackRate = 1;
-        curState = WizardState.RUNNING;
+        speed = 1.5f;
 
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Start()
-    {
-        getClosestWizard();
-        speed = 1.5f;
-    }
-
     private void Update()
     {
-
-        UpdateEffects();
         Behave();
     }
 
     public void Behave()
     {
-        if(target == null)
-            getClosestWizard();
-
         switch (curState)
         {
-            case WizardState.RUNNING:
+            case WizardState.IDLE:
+                BehaveIdle();
                 break;
             case WizardState.ATTACKING:
-                UpdateAttack();
+                BehaveAttacking();
+                break;
+            case WizardState.FLEEING:
+                BehaveFleeing();
+                break;
+            case WizardState.RUNNING:
+                break;
+            default:
                 break;
         }
-
+        UpdateEffects();
         timeTilAttack -= attackRate * Time.deltaTime;
     }
 
     private void FixedUpdate()
     {
-        UpdateMovement();
+        if (curState == WizardState.RUNNING)
+        {
+            BehaveRunning();
+        }
     }
 
-    
+    public void BehaveIdle()
+    {
+        if (target == null)
+        {
+            getClosestWizard();
+        }
+        else curState = WizardState.RUNNING;
+    }
 
-    void UpdateMovement()
+    public void BehaveRunning()
     {
         try
         {
@@ -73,12 +79,14 @@ public class FireWizard : Wizard, IWizardAI
         }
         catch (Exception)
         {
+            Debug.LogError("Exception when running towards enemy!");
             target = null;
+            curState = WizardState.IDLE;
             return;
         }
     }
 
-    void UpdateAttack()
+    public void BehaveAttacking()
     {
         if (timeTilAttack <= 0)
         {
@@ -105,5 +113,10 @@ public class FireWizard : Wizard, IWizardAI
 
             timeTilAttack = attackTimer;
         }
+    }
+
+    public void BehaveFleeing()
+    {
+        throw new NotImplementedException();
     }
 }

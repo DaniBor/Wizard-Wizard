@@ -38,7 +38,6 @@ public class StatusEffect
     {
         if(secondsTillTick <= 0)
         {
-            Debug.Log("Ticking...");
             effect.OnTick(target);
             secondsTillTick = tickTime;
         }

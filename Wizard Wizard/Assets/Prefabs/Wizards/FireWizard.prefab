@@ -186,6 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   isAlly: 0
+  target: {fileID: 0}
   effects: []
   curState: 0
   fireProjectilePrefab: {fileID: 8274541384762375054, guid: a1660861bac1bb64c908a0beac5b6e3d, type: 3}
