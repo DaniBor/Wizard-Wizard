@@ -3,57 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireWizard : Wizard, IWizardAI
+public class FireWizard : Wizard
 {
     [SerializeField] private GameObject fireProjectilePrefab;
     
 
-    private void Awake()
+    protected sealed override void Awake()
     {
-        attackTimer = 2;
-        timeTilAttack = attackTimer;
-        attackRate = 1;
-        speed = 1.5f;
-
-        rb = GetComponent<Rigidbody2D>();
+        base.Awake();
     }
 
-    private void Update()
+    protected sealed override void Update()
     {
-        Behave();
+        base.Update();
     }
 
-    public void Behave()
+    protected sealed override void FixedUpdate()
     {
-        switch (curState)
-        {
-            case WizardState.IDLE:
-                BehaveIdle();
-                break;
-            case WizardState.ATTACKING:
-                BehaveAttacking();
-                break;
-            case WizardState.FLEEING:
-                BehaveFleeing();
-                break;
-            case WizardState.RUNNING:
-                break;
-            default:
-                break;
-        }
-        UpdateEffects();
-        timeTilAttack -= attackRate * Time.deltaTime;
+        base.FixedUpdate();
     }
 
-    private void FixedUpdate()
-    {
-        if (curState == WizardState.RUNNING)
-        {
-            BehaveRunning();
-        }
-    }
-
-    public void BehaveIdle()
+    public override void BehaveIdle()
     {
         if (target == null)
         {
@@ -62,7 +32,7 @@ public class FireWizard : Wizard, IWizardAI
         else curState = WizardState.RUNNING;
     }
 
-    public void BehaveRunning()
+    public override void BehaveRunning()
     {
         try
         {
@@ -86,7 +56,7 @@ public class FireWizard : Wizard, IWizardAI
         }
     }
 
-    public void BehaveAttacking()
+    public override void BehaveAttacking()
     {
         if (timeTilAttack <= 0)
         {
@@ -115,7 +85,7 @@ public class FireWizard : Wizard, IWizardAI
         }
     }
 
-    public void BehaveFleeing()
+    public override void BehaveFleeing()
     {
         throw new NotImplementedException();
     }

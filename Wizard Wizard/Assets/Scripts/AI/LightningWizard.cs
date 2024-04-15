@@ -9,14 +9,9 @@ public class LightningWizard : Wizard, IWizardAI
 
 
 
-    private void Awake()
+    protected sealed override void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-
-        attackTimer = 2;
-        timeTilAttack = attackTimer;
-        attackRate = 1;
-        speed = 2.0f;
+        base.Awake();
     }
 
 

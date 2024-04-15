@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wizard : Entity
+public abstract class Wizard : Entity, IWizardAI
 {
     public bool isAlly;
-
     [SerializeField] protected Wizard target;
 
     protected float attackTimer;
@@ -29,16 +28,46 @@ public class Wizard : Entity
     [SerializeField] protected WizardState curState;
 
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        speed = 1.5f;
+        rb = GetComponent<Rigidbody2D>();
+        attackTimer = 2;
+        timeTilAttack = attackTimer;
+        attackRate = 1;
+
+        speed = 2.0f;
 
         effects = new List<StatusEffect>();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
-        
+        switch (curState)
+        {
+            case WizardState.IDLE:
+                BehaveIdle();
+                break;
+            case WizardState.ATTACKING:
+                BehaveAttacking();
+                break;
+            case WizardState.FLEEING:
+                BehaveFleeing();
+                break;
+            case WizardState.RUNNING:
+                break;
+            default:
+                break;
+        }
+        UpdateEffects();
+        timeTilAttack -= attackRate * Time.deltaTime;
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        if (curState == WizardState.RUNNING)
+        {
+            BehaveRunning();
+        }
     }
 
     public void DamageMe(Damage dmg)
@@ -51,26 +80,6 @@ public class Wizard : Entity
             Overseer.Instance.OnWizardKill(this);
             return;
         }
-
-        if (dmg.type == Damage.DamageType.LIGHTNING)
-        {
-            Debug.Log("Checking for stun...");
-            if (effects.Count > 0)
-            {
-                foreach(var effect in effects)
-                {
-                    if (effect.type == StatusEffect.EffectType.STUN){
-                        Debug.Log("Stun detected...");
-                        return;
-                    }
-                }
-            }
-            Debug.Log("Applying Status effect...");
-            ApplyStatusEffect(new StatusEffect(1, 1, this, new EffectLightning(), StatusEffect.EffectType.STUN));
-        }
-
-
-        
     }
 
     public bool checkAlly()
@@ -141,5 +150,30 @@ public class Wizard : Entity
     {
         return Vector3.Distance(transform.position, a.transform.position) >
             Vector3.Distance(transform.position, b.transform.position);
+    }
+
+    public virtual void Behave()
+    {
+        //Do Nothing
+    }
+
+    public virtual void BehaveIdle()
+    {
+        //Do Nothing
+    }
+
+    public virtual void BehaveRunning()
+    {
+        //Do Nothing
+    }
+
+    public virtual void BehaveAttacking()
+    {
+        //Do Nothing
+    }
+
+    public virtual void BehaveFleeing()
+    {
+        //Do Nothing
     }
 }

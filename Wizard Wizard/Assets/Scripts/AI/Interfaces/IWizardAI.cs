@@ -4,7 +4,6 @@ using UnityEngine;
 
 public interface IWizardAI
 {
-    void Behave();
     void BehaveIdle();
     void BehaveRunning();
     void BehaveAttacking();
