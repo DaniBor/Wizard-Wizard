@@ -9,7 +9,7 @@ public class FireballProjectile : MonoBehaviour, IProjectile
     public float speed;
     public Vector2 dir;
     public bool isAllyProjectile;
-
+    public bool isBuffed;
 
 
     private void Start()
@@ -41,7 +41,7 @@ public class FireballProjectile : MonoBehaviour, IProjectile
                 EffectBurning ef = new EffectBurning();
                 StatusEffect burn = new StatusEffect(2, 1, wiz, ef, StatusEffect.EffectType.DEBUFF);
 
-                wiz.DamageMe(new Damage(1, Damage.DamageType.FIRE));
+                wiz.DamageMe(new Damage(1, Damage.DamageType.FIRE, isBuffed));
                 wiz.ApplyStatusEffect(burn);
 
                 Destroy(gameObject);

@@ -15,7 +15,7 @@ public class LightningWizard : Wizard, IWizardAI
     }
 
 
-    public void Behave()
+    public sealed override void Behave()
     {
         switch (curState)
         {
@@ -38,12 +38,12 @@ public class LightningWizard : Wizard, IWizardAI
     }
 
 
-    private void Update()
+    protected sealed override void Update()
     {
         Behave();
     }
 
-    private void FixedUpdate()
+    protected sealed override void FixedUpdate()
     {
         if (curState == WizardState.RUNNING)
         {
@@ -51,7 +51,7 @@ public class LightningWizard : Wizard, IWizardAI
         }
     }
 
-    public void BehaveIdle()
+    public sealed override void BehaveIdle()
     {
         if (target == null)
         {
@@ -60,7 +60,7 @@ public class LightningWizard : Wizard, IWizardAI
         else curState = WizardState.RUNNING;
     }
 
-    public void BehaveRunning()
+    public sealed override void BehaveRunning()
     {
         try
         {
@@ -78,38 +78,46 @@ public class LightningWizard : Wizard, IWizardAI
         catch (Exception)
         {
             target = null;
+            curState = WizardState.IDLE;
             return;
         }
     }
 
-    public void BehaveAttacking()
+    public sealed override void BehaveAttacking()
     {
-        if (timeTilAttack <= 0)
+        if (target != null && Vector3.Distance(transform.position, target.transform.position) < 2.5)
         {
-            Vector2 dir;
-            try
+            if (timeTilAttack <= 0)
             {
-                dir = transform.position - target.transform.position;
+                Vector2 dir;
+                try
+                {
+                    dir = transform.position - target.transform.position;
+                }
+                catch (Exception)
+                {
+                    target = null;
+                    curState = WizardState.RUNNING;
+                    return;
+                }
+
+                dir.Normalize();
+                LightningProjectile projectile =
+                    Instantiate(lightningProjectilePrefab, transform.position, Quaternion.identity)
+                    .GetComponent<LightningProjectile>();
+
+                projectile.isBuffed = CheckForStatusEffect(StatusEffect.EffectType.ATTACKBUFF);
+                projectile.isAllyProjectile = isAlly;
+
+                timeTilAttack = attackTimer;
             }
-            catch (Exception)
-            {
-                target = null;
-                curState = WizardState.RUNNING;
-                return;
-            }
-
-            dir.Normalize();
-            LightningProjectile projectile =
-                Instantiate(lightningProjectilePrefab, transform.position, Quaternion.identity)
-                .GetComponent<LightningProjectile>();
-
-            projectile.isAllyProjectile = isAlly;
-
-            timeTilAttack = attackTimer;
         }
+        else curState = WizardState.IDLE;
+
+
     }
 
-    public void BehaveFleeing()
+    public sealed override void BehaveFleeing()
     {
         throw new NotImplementedException();
     }

@@ -4,40 +4,43 @@ using UnityEngine;
 
 public class DummyWizard : Wizard, IWizardAI
 {
-    public void Behave()
+    public sealed override void Behave()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
-    public void BehaveAttacking()
+    public sealed override void BehaveAttacking()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
-    public void BehaveFleeing()
+    public sealed override void BehaveFleeing()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
-    public void BehaveIdle()
+    public sealed override void BehaveIdle()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
-    public void BehaveRunning()
+    public sealed override void BehaveRunning()
     {
-        throw new System.NotImplementedException();
+        //Do nothing
     }
 
-    // Start is called before the first frame update
-    void Start()
+    protected sealed override void Awake()
     {
-        
+        base.Awake();
     }
 
-    // Update is called once per frame
-    void Update()
+    protected sealed override void Update()
     {
-        
+        base.Update();
+    }
+
+    protected sealed override void FixedUpdate()
+    {
+        base.FixedUpdate();
     }
 }

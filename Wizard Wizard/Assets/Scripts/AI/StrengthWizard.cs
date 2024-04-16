@@ -1,43 +1,73 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class StrengthWizard : Wizard, IWizardAI
 {
-    public void Behave()
+    protected sealed override void Awake()
     {
-        throw new System.NotImplementedException();
+        base.Awake();
+        isStatusWizard = true;
     }
 
-    public void BehaveAttacking()
+    protected sealed override void Update()
     {
-        throw new System.NotImplementedException();
+        base.Update();
     }
 
-    public void BehaveFleeing()
+    protected sealed override void FixedUpdate()
     {
-        throw new System.NotImplementedException();
+        base.FixedUpdate();
     }
 
-    public void BehaveIdle()
+    public override void BehaveIdle()
     {
-        throw new System.NotImplementedException();
+        if (target == null)
+        {
+            getClosestUnbuffedAlly(StatusEffect.EffectType.DEFENSEBUFF);
+        }
+        else curState = WizardState.RUNNING;
     }
 
-    public void BehaveRunning()
+    public override void BehaveRunning()
     {
-        throw new System.NotImplementedException();
+        try
+        {
+            if (Vector2.Distance(transform.position, target.transform.position) > 2.5f)
+            {
+                Vector3 delta = transform.position - target.transform.position;
+                delta.Normalize();
+
+                rb.MovePosition(transform.position - delta * Time.deltaTime * speed);
+
+            }
+            else
+                curState = WizardState.ATTACKING;
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Exception when running towards enemy!");
+            target = null;
+            curState = WizardState.IDLE;
+            return;
+        }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public override void BehaveAttacking()
     {
-        
+        if (timeTilAttack <= 0)
+        {
+            EffectAttackBuff buff = new EffectAttackBuff();
+            StatusEffect status = new StatusEffect(10, 1, target, buff, StatusEffect.EffectType.ATTACKBUFF);
+
+            target.ApplyStatusEffect(status);
+            target = null;
+            curState = WizardState.IDLE;
+            timeTilAttack = attackTimer;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void BehaveFleeing()
     {
-        
+        throw new NotImplementedException();
     }
 }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4066292774253767813}
   - component: {fileID: 7494064302817682347}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: -3916559206916763572}
   - component: {fileID: 2510204111921559140}
   - component: {fileID: -1224596162162974663}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Magic Wizard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -161,8 +161,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 5dfa7028afcce1b4bb185babfe4f77e4, type: 3}
-  m_Color: {r: 0, g: 1, b: 0.9394505, a: 1}
+  m_Sprite: {fileID: 21300000, guid: e1475cff98186214a8bf08b3bd92e6ae, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -184,9 +184,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3885a1192e8c3a64e99c2f3490fc4b1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  maxHealth: 20
+  health: 20
+  speed: 2
+  manaCost: 15
   isAlly: 0
   target: {fileID: 0}
+  attackTimer: 1.5
+  timeTilAttack: 0
+  attackRate: 1
   effects: []
   curState: 0
   magicProjectilePrefab: {fileID: 8274541384762375054, guid: 4b8f7ff8a6f51e44896c5b1c66c40092, type: 3}
@@ -205,7 +211,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 192
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2

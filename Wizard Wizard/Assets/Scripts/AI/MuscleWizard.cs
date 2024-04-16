@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class MuscleWizard : Wizard, IWizardAI
 {
-    public void Behave()
+    public sealed override void Behave()
     {
         throw new System.NotImplementedException();
     }
 
-    public void BehaveAttacking()
+    public sealed override void BehaveAttacking()
     {
         throw new System.NotImplementedException();
     }
 
-    public void BehaveFleeing()
+    public sealed override void BehaveFleeing()
     {
         throw new System.NotImplementedException();
     }
 
-    public void BehaveIdle()
+    public sealed override void BehaveIdle()
     {
         throw new System.NotImplementedException();
     }
 
-    public void BehaveRunning()
+    public sealed override void BehaveRunning()
     {
         throw new System.NotImplementedException();
     }
@@ -36,7 +36,7 @@ public class MuscleWizard : Wizard, IWizardAI
     }
 
     // Update is called once per frame
-    void Update()
+    protected sealed override void Update()
     {
         
     }

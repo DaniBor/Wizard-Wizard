@@ -58,31 +58,38 @@ public class FireWizard : Wizard
 
     public override void BehaveAttacking()
     {
-        if (timeTilAttack <= 0)
+        if (target != null && Vector3.Distance(transform.position, target.transform.position) < 2.5)
         {
-            Vector2 dir;
-            try
+            if (timeTilAttack <= 0)
             {
-                dir = transform.position - target.transform.position;
+                Vector2 dir;
+                try
+                {
+                    dir = transform.position - target.transform.position;
+                }
+                catch (Exception)
+                {
+                    target = null;
+                    curState = WizardState.RUNNING;
+                    return;
+                }
+
+                dir.Normalize();
+                FireballProjectile projectile =
+                    Instantiate(fireProjectilePrefab, transform.position, Quaternion.identity)
+                    .GetComponent<FireballProjectile>();
+
+                projectile.isBuffed = CheckForStatusEffect(StatusEffect.EffectType.ATTACKBUFF);
+                projectile.dir = dir;
+                projectile.isAllyProjectile = isAlly;
+                projectile.speed = 5.0f;
+
+                timeTilAttack = attackTimer;
             }
-            catch (Exception)
-            {
-                target = null;
-                curState = WizardState.RUNNING;
-                return;
-            }
-
-            dir.Normalize();
-            FireballProjectile projectile =
-                Instantiate(fireProjectilePrefab, transform.position, Quaternion.identity)
-                .GetComponent<FireballProjectile>();
-
-            projectile.dir = dir;
-            projectile.isAllyProjectile = isAlly;
-            projectile.speed = 5.0f;
-
-            timeTilAttack = attackTimer;
         }
+        else curState = WizardState.IDLE;
+
+
     }
 
     public override void BehaveFleeing()

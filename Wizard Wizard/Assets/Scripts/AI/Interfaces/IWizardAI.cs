@@ -9,5 +9,5 @@ public interface IWizardAI
     void BehaveAttacking();
     void BehaveFleeing();
 
-    void ApplyStatusEffect(StatusEffect effect);
+    bool ApplyStatusEffect(StatusEffect effect);
 }

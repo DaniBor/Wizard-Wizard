@@ -12,43 +12,17 @@ public class MagicWizard : Wizard, IWizardAI
         base.Awake();
     }
 
-    private void Update()
+    protected sealed override void Update()
     {
-        Behave();
+        base.Update();
     }
 
-    public void Behave()
+    protected sealed override void FixedUpdate()
     {
-        switch (curState)
-        {
-            case WizardState.IDLE:
-                BehaveIdle();
-                break;
-            case WizardState.ATTACKING:
-                BehaveAttacking();
-                break;
-            case WizardState.FLEEING:
-                BehaveFleeing();
-                break;
-            case WizardState.RUNNING:
-                break;
-            default:
-                break;
-        }
-        UpdateEffects();
-        timeTilAttack -= attackRate * Time.deltaTime;
+        base.FixedUpdate();
     }
 
-    private void FixedUpdate()
-    {
-        if(curState == WizardState.RUNNING)
-        {
-            BehaveRunning();
-        }
-    }
-
-
-    public void BehaveIdle()
+    public override void BehaveIdle()
     {
         if (target == null)
         {
@@ -57,51 +31,14 @@ public class MagicWizard : Wizard, IWizardAI
         else curState = WizardState.RUNNING;
     }
 
-    public void BehaveAttacking()
-    {
-        if (timeTilAttack <= 0)
-        {
-            Vector2 dir;
-            try
-            {
-                dir = transform.position - target.transform.position;
-            }
-            catch (Exception)
-            {
-                target = null;
-                curState = WizardState.RUNNING;
-                return;
-            }
-
-            dir.Normalize();
-            MagicProjectile projectile =
-                Instantiate(magicProjectilePrefab, transform.position, Quaternion.identity)
-                .GetComponent<MagicProjectile>();
-
-            projectile.dir = dir;
-            projectile.isAllyProjectile = isAlly;
-            projectile.speed = 5.0f;
-
-            timeTilAttack = attackTimer;
-        }
-    }
-
-    public void BehaveFleeing()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void BehaveRunning()
+    public override void BehaveRunning()
     {
         try
         {
-            Debug.Log("Trying to run.");
             if (Vector2.Distance(transform.position, target.transform.position) > 2.5f)
             {
-                Debug.Log("Calculating dir");
                 Vector3 delta = transform.position - target.transform.position;
                 delta.Normalize();
-                Debug.Log("New pos = " + delta);
 
                 rb.MovePosition(transform.position - delta * Time.deltaTime * speed);
 
@@ -111,10 +48,51 @@ public class MagicWizard : Wizard, IWizardAI
         }
         catch (Exception)
         {
-            Debug.LogError("Exception when running towards enemy!");
             target = null;
             curState = WizardState.IDLE;
             return;
         }
+    }
+
+    public override void BehaveAttacking()
+    {
+        
+
+
+        if (target != null && Vector3.Distance(transform.position, target.transform.position) < 2.5)
+        {
+            if (timeTilAttack <= 0)
+            {
+                Vector2 dir;
+                try
+                {
+                    dir = transform.position - target.transform.position;
+                }
+                catch (Exception)
+                {
+                    target = null;
+                    curState = WizardState.RUNNING;
+                    return;
+                }
+
+                dir.Normalize();
+                MagicProjectile projectile =
+                    Instantiate(magicProjectilePrefab, transform.position, Quaternion.identity)
+                    .GetComponent<MagicProjectile>();
+
+                projectile.isBuffed = CheckForStatusEffect(StatusEffect.EffectType.ATTACKBUFF);
+                projectile.dir = dir;
+                projectile.isAllyProjectile = isAlly;
+                projectile.speed = 5.0f;
+
+                timeTilAttack = attackTimer;
+            }
+        }
+        else curState = WizardState.IDLE;
+    }
+
+    public override void BehaveFleeing()
+    {
+        throw new NotImplementedException();
     }
 }

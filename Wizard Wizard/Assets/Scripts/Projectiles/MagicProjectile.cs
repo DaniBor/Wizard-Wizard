@@ -9,7 +9,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile
     public float speed;
     public Vector2 dir;
     public bool isAllyProjectile;
-
+    public bool isBuffed;
 
 
     private void Start()
@@ -38,7 +38,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile
         {
             if (isAllyProjectile != wiz.checkAlly())
             {
-                wiz.DamageMe(new Damage(6, Damage.DamageType.MAGIC));
+                wiz.DamageMe(new Damage(5, Damage.DamageType.MAGIC, isBuffed));
 
                 Destroy(gameObject);
             }

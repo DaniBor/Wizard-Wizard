@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LightningProjectile : MonoBehaviour, IProjectile
 {
     private int maxTargets;
-    private int maxRange;
+    private float maxRange;
     public bool isAllyProjectile;
+    public bool isBuffed;
 
     private List<Wizard> lightningChain = new List<Wizard>();
 
@@ -24,14 +26,16 @@ public class LightningProjectile : MonoBehaviour, IProjectile
     // Start is called before the first frame update
     void Start()
     {
-        maxRange = 3;
+        maxRange = 3.5f;
         maxTargets = 4;
 
         lr = GetComponent<LineRenderer>();
-        lightningChain = FindTargets();
-        RenderLine();
-        ApplyLightning();
-
+        FindTargets();
+        if(lightningChain.Count > 0)
+        {
+            RenderLine();
+            ApplyLightning();
+        }
     }
 
     // Update is called once per frame
@@ -56,47 +60,33 @@ public class LightningProjectile : MonoBehaviour, IProjectile
         return wizards;
     }
 
-    List<Wizard> FindTargets()
+    void FindTargets()
     {
-        List<Wizard> targets = Overseer.Instance.getEnemyWizards();
-        targets = SortTargets(transform, targets);
+        List<Wizard> targetsInRange = new List<Wizard>();
+        Transform anchor = transform;
+        //targets = SortTargets(transform, targets);
 
-
-        if (Vector3.Distance(transform.position, targets[0].transform.position) < maxRange)
+        for(int i = 0; i < maxTargets; i++)
         {
-            lightningChain.Add(targets[0]);
-            targets.RemoveAt(0);
-        }
-        else return null;
-
-
-        for (int i = 0; i < maxTargets; i++)
-        {
-            targets = SortTargets(lightningChain[lightningChain.Count - 1].transform, targets);
-
-            Debug.Log(Vector3.Distance(lightningChain[i].transform.position, targets[0].transform.position));
-            if (Vector3.Distance(lightningChain[i].transform.position, targets[0].transform.position) < maxRange)
-            {
-                lightningChain.Add(targets[0]);
-                targets.RemoveAt(0);
-            }
+            targetsInRange = Overseer.Instance.getWizardsInRange(anchor, maxRange, isAllyProjectile);
+            if (targetsInRange.Count > 0)
+                targetsInRange = SortTargets(anchor, targetsInRange);
             else break;
 
-            
+            targetsInRange.RemoveAll(item => lightningChain.Contains(item) == true);
+            if (targetsInRange.Count > 0)
+            {
+                lightningChain.Add(targetsInRange[0]);
+                anchor = targetsInRange[0].transform;
+            }
+            else break;
         }
-        Debug.Log(lightningChain.Count);
-        return lightningChain;
     }
 
     private void RenderLine()
     {
         if (lightningChain != null)
         {
-            foreach (var target in lightningChain)
-            {
-                Debug.Log(target.name);
-            }
-
             Vector3[] pos = new Vector3[lightningChain.Count + 1];
             pos[0] = transform.position;
             for (int i = 1; i < lightningChain.Count + 1; i++)
@@ -115,8 +105,15 @@ public class LightningProjectile : MonoBehaviour, IProjectile
         {
             foreach(var wizard in lightningChain)
             {
-                wizard.DamageMe(new Damage(3, Damage.DamageType.LIGHTNING));
-                Instantiate(lightingParticlePrefab, wizard.transform.position, Quaternion.identity);
+
+                EffectAir el = new EffectAir();
+                StatusEffect lightning = new StatusEffect(4, 1, wizard, el, StatusEffect.EffectType.STUN);
+
+                if (wizard.ApplyStatusEffect(lightning))
+                {
+                    wizard.DamageMe(new Damage(2, Damage.DamageType.LIGHTNING, isBuffed));
+                    Instantiate(lightingParticlePrefab, wizard.transform.position, Quaternion.identity);
+                }
             }
         }
     }

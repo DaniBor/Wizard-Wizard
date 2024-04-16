@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class StatusEffect
 {
-    private float duration;
+    public float duration;
 
     private float tickTime;
     private float secondsTillTick;
@@ -18,7 +18,8 @@ public class StatusEffect
 
     public enum EffectType
     {
-        BUFF,
+        ATTACKBUFF,
+        DEFENSEBUFF,
         DEBUFF,
         STUN,
         STUNIMMUNITY

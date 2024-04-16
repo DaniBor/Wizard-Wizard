@@ -4,14 +4,12 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour
 {
-    protected float maxHealth;
+    [Header("Stats")]
+    [SerializeField] protected float maxHealth;
     [SerializeField] protected float health;
-
-    protected float maxMana;
-    protected float mana;
 
     protected int defense;
 
-    protected float speed;
+    [SerializeField] protected float speed;
 
 }

@@ -12,7 +12,7 @@ public class EffectBurning : IStatusEffect
     public void OnTick(Wizard wiz)
     {
         if(wiz != null)
-            wiz.DamageMe(new Damage(1, Damage.DamageType.FIRE));
+            wiz.DamageMe(new Damage(1, Damage.DamageType.FIRE, false));
     }
 
     public void OnRefresh()

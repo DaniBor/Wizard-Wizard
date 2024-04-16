@@ -10,4 +10,17 @@ public class StartMenuButton : MonoBehaviour
     {
         SceneManager.LoadScene(scene);
     }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+    [SerializeField] private AudioSource music;
+
+
+    private void Awake()
+    {
+        music.Play();
+    }
 }
